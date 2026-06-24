@@ -8,6 +8,14 @@ export async function getLatestProducts() {
     take: LATEST_PRODUCT_LIMIT,
     orderBy: { createdAt: "desc" },
   });
-  
+
   return convertToPlainObject(data);
+}
+
+// git Single product by its slug
+
+export async function getProductBySlug(slug: string) {
+  return await prisma.product.findFirst({
+    where: { slug },
+  });
 }
