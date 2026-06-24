@@ -8,7 +8,7 @@ const HomePage = async () => {
   const latestProduct = await getLatestProducts();
   return (
     <>
-      <ProductList title="Newest Arrivals" data={latestProduct} limit={4} />
+      <ProductList title="Newest Arrivals"  data={latestProduct}  limit={4} />
     </>
   );
 };
