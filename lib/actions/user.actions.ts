@@ -6,6 +6,8 @@ import { isRedirectError } from "next/dist/client/components/redirect-error";
 // Sign in the user with credentials
 
 export async function signInWithCredentials(prevState: unknown, formData: FormData) {
+  console.log("Email from Form:", formData.get("email"));
+  console.log("Password from Form:", formData.get("password"));
   try {
     const user = signInFormSchema.parse({
       email: formData.get("email"),
