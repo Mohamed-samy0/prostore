@@ -53,6 +53,7 @@ export const config: NextAuthConfig = {
     }),
   ],
   callbacks: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async session({ session, user, trigger, token }: any) {
       session.user.id = token.sub;
       if (trigger === "update") {
