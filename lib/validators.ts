@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { email, z } from "zod";
 import { formatNumberWithDecimal } from "./utils";
 
 const currency = z
@@ -28,4 +28,15 @@ export const signInFormSchema = z.object({
     .email({ error: "Invalid email address" })
     .min(3, "Email must be at least 3 characters"),
   password: z.string().min(3, { message: "Password must be at least 3 characters" }),
+});
+
+// Schema for signing up a user
+export const signUpFormSchema = z.object({
+  name: z.string().min(3, "Name must be at least 3 characters"),
+  email: z.email({ error: "Invalid email address" }),
+  password: z.string().min(3, { message: "Password must be at least 3 characters" }),
+  confirmPassword: z.string().min(3, "Confirm password must be at least 3 characters"),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"], // This will attach the error to the confirmPassword field
 });
