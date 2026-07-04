@@ -1,4 +1,4 @@
-import { email, z } from "zod";
+import { email, nullable, z } from "zod";
 import { formatNumberWithDecimal } from "./utils";
 
 const currency = z
@@ -31,12 +31,34 @@ export const signInFormSchema = z.object({
 });
 
 // Schema for signing up a user
-export const signUpFormSchema = z.object({
-  name: z.string().min(3, "Name must be at least 3 characters"),
-  email: z.email({ error: "Invalid email address" }),
-  password: z.string().min(3, { message: "Password must be at least 3 characters" }),
-  confirmPassword: z.string().min(3, "Confirm password must be at least 3 characters"),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords do not match",
-  path: ["confirmPassword"], // This will attach the error to the confirmPassword field
+export const signUpFormSchema = z
+  .object({
+    name: z.string().min(3, "Name must be at least 3 characters"),
+    email: z.email({ error: "Invalid email address" }),
+    password: z.string().min(3, { message: "Password must be at least 3 characters" }),
+    confirmPassword: z.string().min(3, "Confirm password must be at least 3 characters"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"], // This will attach the error to the confirmPassword field
+  });
+
+// cart Schema
+export const cartItemSchema = z.object({
+  productId: z.string().min(1, "Product ID is required"),
+  name: z.string().min(1, "Product name is required"),
+  slug: z.string().min(1, "Product slug is required"),
+  qty: z.number().int().nonnegative("Quantity must be a non-negative integer"),
+  image: z.string().min(1, "Product image is required"),
+  price: currency,
+});
+
+export const insertCartSchema = z.object({
+  items: z.array(cartItemSchema),
+  itemsPrice: currency,
+  totalPrice: currency,
+  shippingPrice: currency,
+  taxPrice: currency,
+  sessionCartId: z.string().min(1, "Session cart ID is required"),
+  userId: z.string().optional().nullable(),
 });
