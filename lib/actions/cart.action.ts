@@ -1,11 +1,29 @@
 "use server";
 
 import { CartItem } from "@/types";
-import { convertToPlainObject, formatError } from "../utils";
+import { convertToPlainObject, formatError, round2 } from "../utils";
 import { cookies } from "next/headers";
 import { auth } from "@/auth";
 import { prisma } from "@/db/prisma";
-import { cartItemSchema } from "../validators";
+import { cartItemSchema, insertCartSchema } from "../validators";
+import { revalidatePath } from "next/cache";
+
+// Calculate cart prices
+const calcPrices = (item: CartItem[]) => {
+  const itemsPrice = round2(
+      item.reduce((acc, item) => acc + Number(item.price) * item.qty, 0),
+    ),
+    shippingPrice = round2(itemsPrice > 100 ? 0 : 10),
+    taxPrice = round2(0.15 * itemsPrice),
+    totalPrice = round2(itemsPrice + shippingPrice + taxPrice);
+
+  return {
+    itemsPrice: itemsPrice.toFixed(2),
+    shippingPrice: shippingPrice.toFixed(2),
+    taxPrice: taxPrice.toFixed(2),
+    totalPrice: totalPrice.toFixed(2),
+  };
+};
 
 export async function addItemToCart(data: CartItem) {
   // Check for session cart cookie
@@ -26,16 +44,27 @@ export async function addItemToCart(data: CartItem) {
   const product = await prisma.product.findFirst({
     where: { id: item.productId },
   });
-  console.log("Session Cart ID:", sessionCartId);
-  console.log("User ID:", userId);
-  console.log("item:", item);
-  console.log("product:", product);
 
-  try {
+  if (!product) throw new Error("Product not found in database.");
+  if (!cart) {
+    // Create new cart
+    const newCart = insertCartSchema.parse({
+      userId: userId,
+      sessionCartId: sessionCartId,
+      items: [item],
+      ...calcPrices([item]),
+    });
+    //Add to database
+    await prisma.cart.create({ data: newCart });
+    // Revalidate product page
+    revalidatePath(`/product/${product.slug}`);
     return {
       success: true,
       message: "Item added to cart successfully",
     };
+  }
+
+  try {
   } catch (error) {
     return {
       success: false,
