@@ -61,7 +61,7 @@ export function formatCurrency(amount: number | string | null) {
     return CURRENCY_FORMATTER.format(amount);
   } else if (typeof amount === "string") {
     return CURRENCY_FORMATTER.format(Number(amount));
-  }else {
-    return "NaN"
+  } else {
+    return "NaN";
   }
 }
