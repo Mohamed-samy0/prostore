@@ -64,11 +64,23 @@ export const insertCartSchema = z.object({
 });
 
 export const shippingAddressSchema = z.object({
-  fullName: z.string().min(3, "Name must be at least 3 characters"),
-  streetAddress: z.string().min(3, "Address must be at least 3 characters"),
-  city: z.string().min(3, "city must be at least 3 characters"),
+  fullName: z
+    .string()
+    .min(3, "Name must be at least 3 characters")
+    .regex(/^[a-zA-Z\u0600-\u06FF\s]+$/, "Name must contain only letters"),
+  streetAddress: z
+    .string()
+    .min(3, "Address must be at least 3 characters")
+    .regex(/^[a-zA-Z\u0600-\u06FF\s]+$/, "Street Address must contain only letters"),
+  city: z
+    .string()
+    .min(3, "city must be at least 3 characters")
+    .regex(/^[a-zA-Z\u0600-\u06FF\s]+$/, "City must contain only letters"),
   postalCode: z.string().min(3, "Postal code must be at least 3 characters"),
-  country: z.string().min(3, "Country must be at least 3 characters"),
+  country: z
+    .string()
+    .min(3, "Country must be at least 3 characters")
+    .regex(/^[a-zA-Z\u0600-\u06FF\s]+$/, "Country must contain only letters"),
   lat: z.number().optional(),
   lng: z.number().optional(),
 });

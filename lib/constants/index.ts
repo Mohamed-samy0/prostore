@@ -20,9 +20,9 @@ export const signUpDefaultValues = {
 };
 
 export const shippingAddressDefaultValues = {
-  fullName: "Mohamed Samy",
-  streetAddress: "Zagazig",
-  city: "Cairo",
-  postalCode: "11411",
-  country: "Egypt",
+  fullName: "",
+  streetAddress: "",
+  city: "",
+  postalCode: "",
+  country: "",
 };
