@@ -107,6 +107,21 @@ export const config: NextAuthConfig = {
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     authorized({ request, auth }: any) {
+      // Array of regex patterns of protected paths
+      const protectedPaths = [
+        /\/shipping-address/,
+        /\/payment-method/,
+        /\/place-order/,
+        /\/profile/,
+        /\/user\/(.*)/,
+        /\/order\/(.*)/,
+        /\/admin/,
+      ];
+
+      //  Get pathname from the req URL Object
+      const { pathname } = request.nextUrl;
+      if (!auth && protectedPaths.some((p) => p.test(pathname))) return false;
+      
       if (!request.cookies.get("sessionCartId")) {
         // Generate a new sessionCartId and set it as a cookie
         const sessionCartId = crypto.randomUUID();
