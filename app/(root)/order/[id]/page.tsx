@@ -1,5 +1,7 @@
 import { getOrderById } from "@/lib/actions/order.actions";
 import { notFound } from "next/navigation";
+import OrderDetailsTable from "./order-details-table";
+import { ShippingAddress } from "@/types";
 
 export const metadata = {
   title: "Order Details",
@@ -17,7 +19,18 @@ const OrderDetailsPage = async (props: {
   const order = await getOrderById(id);
   if (!order) notFound();
 
-  return <>Order Details Form</>;
+  return (
+    <OrderDetailsTable
+      order={{
+        ...order,
+        shippingAddress: order.shippingAddress as ShippingAddress,
+        user: {
+          ...order.user,
+          name: order.user.name || "Customer",
+        },
+      }}
+    />
+  );
 };
 
 export default OrderDetailsPage;
