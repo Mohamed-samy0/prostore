@@ -1,6 +1,44 @@
 const base = process.env.PAYPAL_API_URL || "https://api-m.sandbox.paypal.com";
 
-export const paypal = {};
+export const paypal = {
+  createOrder: async function createOrder(price: number) {
+    const accessToken = await generateAccessToken();
+    const url = `${base}/v2/checkout/orders`;
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        intent: "CAPTURE",
+        purchase_units: [
+          {
+            amount: {
+              currency_code: "USD",
+              value: price,
+            },
+          },
+        ],
+      }),
+    });
+    return handleResponse(response);
+  },
+  capturePayment: async function capturePayment(orderId: string) {
+    const accessToken = await generateAccessToken();
+    const url = `${base}v2/checkout/orders/${orderId}/capture`;
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return handleResponse(response);
+  },
+};
 
 // Generate paypal access token
 async function generateAccessToken() {
@@ -19,8 +57,7 @@ async function generateAccessToken() {
   return jsonData.access_token;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function handleResponse(response: any) {
+async function handleResponse(response: Response) {
   if (response.status === 200 || response.status === 201) {
     return response.json();
   }
