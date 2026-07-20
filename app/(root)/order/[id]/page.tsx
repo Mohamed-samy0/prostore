@@ -29,6 +29,7 @@ const OrderDetailsPage = async (props: {
           name: order.user.name || "Customer",
         },
       }}
+      paypalClientId={process.env.PAYPAL_CLIENT_ID || "sb"}
     />
   );
 };
