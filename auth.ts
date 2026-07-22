@@ -66,7 +66,7 @@ export const config: NextAuthConfig = {
       return session;
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async jwt({ token, user, trigger }: any) {
+    async jwt({ token, user, trigger, session }: any) {
       // Assign user fields to token
       if (user) {
         token.id = user.id;
@@ -103,6 +103,11 @@ export const config: NextAuthConfig = {
           }
         }
       }
+
+      // handle session update
+      if (session?.user?.name && trigger === "update") {
+        token.name = session.user.name;
+      }
       return token;
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -121,7 +126,7 @@ export const config: NextAuthConfig = {
       //  Get pathname from the req URL Object
       const { pathname } = request.nextUrl;
       if (!auth && protectedPaths.some((p) => p.test(pathname))) return false;
-      
+
       if (!request.cookies.get("sessionCartId")) {
         // Generate a new sessionCartId and set it as a cookie
         const sessionCartId = crypto.randomUUID();
