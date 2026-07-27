@@ -19,8 +19,15 @@ import {
   PayPalScriptProvider,
   usePayPalScriptReducer,
 } from "@paypal/react-paypal-js";
-import { approvePaypalOrder, createPaypalOrder } from "@/lib/actions/order.actions";
+import {
+  approvePaypalOrder,
+  createPaypalOrder,
+  deliverOrder,
+  updateOrderToPaidByCOD,
+} from "@/lib/actions/order.actions";
 import { toast } from "sonner";
+import { useTransition } from "react";
+import { Button } from "@/components/ui/button";
 
 const PrintLoadingState = () => {
   const [{ isPending, isRejected }] = usePayPalScriptReducer();
@@ -35,12 +42,59 @@ const PrintLoadingState = () => {
   }
 };
 
+// Button to mark order as paid
+const MarkAsPaidButton = ({ orderId }: { orderId: string }) => {
+  const [isPending, startTransition] = useTransition();
+  return (
+    <Button
+      type="button"
+      disabled={isPending}
+      onClick={() =>
+        startTransition(async () => {
+          const res = await updateOrderToPaidByCOD(orderId);
+          if (res.success) {
+            toast.success(res.message);
+          } else {
+            toast.error(res.message);
+          }
+        })
+      }
+    >
+      {isPending ? "processing..." : "Mark As Paid"}
+    </Button>
+  );
+};
+
+const MarkAsDeliveredButton = ({ orderId }: { orderId: string }) => {
+  const [isPending, startTransition] = useTransition();
+  return (
+    <Button
+      type="button"
+      disabled={isPending}
+      onClick={() =>
+        startTransition(async () => {
+          const res = await deliverOrder(orderId);
+          if (res.success) {
+            toast.success(res.message);
+          } else {
+            toast.error(res.message);
+          }
+        })
+      }
+    >
+      {isPending ? "processing..." : "Mark As Delivered"}
+    </Button>
+  );
+};
+
 const OrderDetailsTable = ({
   order,
   paypalClientId,
+  isAdmin,
 }: {
   order: Order;
   paypalClientId: string;
+  isAdmin: boolean;
 }) => {
   const {
     id,
@@ -179,6 +233,13 @@ const OrderDetailsTable = ({
                     />
                   </PayPalScriptProvider>
                 </div>
+              )}
+              {/* Cach on delivery */}
+              {isAdmin && !isPaid && paymentMethod === "CashOnDelivery" && (
+                <MarkAsPaidButton orderId={order.id} />
+              )}
+              {isAdmin && isPaid && !isDelivered && (
+                <MarkAsDeliveredButton orderId={order.id} />
               )}
             </CardContent>
           </Card>
