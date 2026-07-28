@@ -33,7 +33,7 @@ export async function getAllProducts({
   category?: string;
 }) {
   const data = await prisma.product.findMany({
-    skip: (1 - page) * limit,
+    skip: (page - 1) * limit,
     take: limit,
   });
 
