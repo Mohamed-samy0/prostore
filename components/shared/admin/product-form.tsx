@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { insertProductSchema, updateProductSchema } from "@/lib/validators";
 import { Product, productDefaultValues } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ControllerRenderProps, useForm } from "react-hook-form";
+import { ControllerRenderProps, Resolver, useForm } from "react-hook-form";
 import z from "zod";
 import slugify from "slugify";
 import { Textarea } from "@/components/ui/textarea";
@@ -27,12 +27,12 @@ const ProductForm = ({
   product?: Product;
   productId?: string;
 }) => {
-  const form = useForm<z.infer<typeof insertProductSchema>>({
-    // @ts-expect-error: Dynamic schema resolution causes type mismatch in react-hook-form
-    resolver:
-      type === "Update"
-        ? zodResolver(updateProductSchema)
-        : zodResolver(insertProductSchema),
+  type ProductFormValues = z.infer<typeof insertProductSchema>;
+
+  const form = useForm<ProductFormValues>({
+    resolver: zodResolver(
+      type === "Update" ? updateProductSchema : insertProductSchema,
+    ) as Resolver<ProductFormValues>,
     defaultValues: product && type === "Update" ? product : productDefaultValues,
   });
   return (
