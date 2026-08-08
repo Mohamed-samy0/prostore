@@ -1,4 +1,5 @@
 import ProductCard from "@/components/shared/product/product-card";
+import { Button } from "@/components/ui/button";
 import { getAllCategories, getAllProducts } from "@/lib/actions/product.actions";
 import Link from "next/link";
 
@@ -24,6 +25,8 @@ const prices = [
     value: "501-1000",
   },
 ];
+
+const ratings = [4, 3, 2, 1];
 
 const SearchPage = async (props: {
   searchParams: Promise<{
@@ -126,8 +129,49 @@ const SearchPage = async (props: {
             ))}
           </ul>
         </div>
+        {/* Rating links */}
+        <div className="text-xl mt-7 mb-2">Customer Review</div>
+        <div>
+          <ul className="space-y-1">
+            <li>
+              <Link
+                href={getFilterUrl({ r: "all" })}
+                className={`${rating === "all" && "font-bold"}`}
+              >
+                Any
+              </Link>
+            </li>
+            {ratings.map((r) => (
+              <li key={r}>
+                <Link
+                  href={getFilterUrl({ r: `${r}` })}
+                  className={`${r.toString() === rating && "font-bold"}`}
+                >
+                  {`${r} stars & up`}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
       <div className="space-y-4 md:col-span-4">
+        <div className="flex-between flex-col md:flex-row my-4">
+          <div className="flex items-center">
+            {q !== "all" && q !== "" && "Query : " + q}
+            {category !== "all" && category !== "" && "   Category : " + category}
+            {price !== "all" && "    Price: " + price}
+            {rating !== "all" && "    Rating: " + rating + " & up"}
+            &nbsp;
+            {(q !== "all" && q !== "") ||
+            (category !== "all" && category !== "") ||
+            rating !== "all" ||
+            price !== "all" ? (
+              <Button variant={"link"} asChild>
+                <Link href="/search">Clear</Link>
+              </Button>
+            ) : null}
+          </div>
+        </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {products.data.length === 0 && <div>No products found</div>}
           {products.data.map((product) => (
