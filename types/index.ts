@@ -4,6 +4,7 @@ import {
   insertOrderItemSchema,
   insertOrderSchema,
   insertProductSchema,
+  insertReviewSchema,
   paymentResultSchema,
   shippingAddressSchema,
 } from "@/lib/validators";
@@ -44,4 +45,10 @@ export const productDefaultValues = {
   numReviews: "0",
   isFeatured: false,
   banner: null,
+};
+
+export type Review = z.infer<typeof insertReviewSchema> & {
+  id: string;
+  createdAt: Date;
+  user?: { name: string };
 };
