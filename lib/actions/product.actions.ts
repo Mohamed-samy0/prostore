@@ -4,7 +4,7 @@ import { LATEST_PRODUCT_LIMIT, PAGE_SIZE } from "../constants";
 import { prisma } from "@/db/prisma";
 import { revalidatePath } from "next/cache";
 import { insertProductSchema, updateProductSchema } from "../validators";
-import z, { gte } from "zod";
+import z from "zod";
 import { Prisma } from "../generated/prisma";
 
 export async function getLatestProducts() {
