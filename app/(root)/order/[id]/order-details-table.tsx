@@ -28,6 +28,7 @@ import {
 import { toast } from "sonner";
 import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
+import StripePayment from "./stripe-payment";
 
 const PrintLoadingState = () => {
   const [{ isPending, isRejected }] = usePayPalScriptReducer();
@@ -91,10 +92,12 @@ const OrderDetailsTable = ({
   order,
   paypalClientId,
   isAdmin,
+  stripeClientSecret,
 }: {
   order: Order;
   paypalClientId: string;
   isAdmin: boolean;
+  stripeClientSecret: string | null;
 }) => {
   const {
     id,
@@ -233,6 +236,16 @@ const OrderDetailsTable = ({
                     />
                   </PayPalScriptProvider>
                 </div>
+              )}
+
+              {/* Stripe Payment */}
+
+              {!isPaid && paymentMethod === "Stripe" && stripeClientSecret && (
+                <StripePayment
+                  priceInCents={Number(order.totalPrice) * 100}
+                  orderId={order.id}
+                  clientSecret={stripeClientSecret}
+                />
               )}
               {/* Cach on delivery */}
               {isAdmin && !isPaid && paymentMethod === "CashOnDelivery" && (
