@@ -13,6 +13,7 @@ import { z } from "zod";
 export type Product = z.infer<typeof insertProductSchema> & {
   id: string;
   rating: string;
+  numReviews: number;
   createdAt: Date;
 };
 export type Cart = z.infer<typeof insertCartSchema>;
@@ -50,5 +51,5 @@ export const productDefaultValues = {
 export type Review = z.infer<typeof insertReviewSchema> & {
   id: string;
   createdAt: Date;
-  user?: { name: string };
+  user?: { name: string | null};
 };
