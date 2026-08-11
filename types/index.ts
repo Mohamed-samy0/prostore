@@ -4,6 +4,7 @@ import {
   insertOrderItemSchema,
   insertOrderSchema,
   insertProductSchema,
+  insertReviewSchema,
   paymentResultSchema,
   shippingAddressSchema,
 } from "@/lib/validators";
@@ -12,6 +13,7 @@ import { z } from "zod";
 export type Product = z.infer<typeof insertProductSchema> & {
   id: string;
   rating: string;
+  numReviews: number;
   createdAt: Date;
 };
 export type Cart = z.infer<typeof insertCartSchema>;
@@ -44,4 +46,10 @@ export const productDefaultValues = {
   numReviews: "0",
   isFeatured: false,
   banner: null,
+};
+
+export type Review = z.infer<typeof insertReviewSchema> & {
+  id: string;
+  createdAt: Date;
+  user?: { name: string | null};
 };
