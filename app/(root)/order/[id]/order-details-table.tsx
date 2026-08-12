@@ -237,9 +237,7 @@ const OrderDetailsTable = ({
                   </PayPalScriptProvider>
                 </div>
               )}
-
               {/* Stripe Payment */}
-
               {!isPaid && paymentMethod === "Stripe" && stripeClientSecret && (
                 <StripePayment
                   priceInCents={Number(order.totalPrice) * 100}
@@ -251,9 +249,14 @@ const OrderDetailsTable = ({
               {isAdmin && !isPaid && paymentMethod === "CashOnDelivery" && (
                 <MarkAsPaidButton orderId={order.id} />
               )}
-              {isAdmin && isPaid && !isDelivered && (
-                <MarkAsDeliveredButton orderId={order.id} />
-              )}
+              {!isAdmin && !isPaid && paymentMethod === "CashOnDelivery" && (
+                <div className="w-full text-center p-4 border rounded-md bg-secondary/50">
+                  <p className="font-semibold">Pay on Delivery</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    You will pay for this order when it is delivered to your address.
+                  </p>
+                </div>
+              )}{" "}
             </CardContent>
           </Card>
         </div>
