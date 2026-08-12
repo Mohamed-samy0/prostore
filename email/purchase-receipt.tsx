@@ -12,13 +12,64 @@ import {
   Tailwind,
   Text,
 } from "@react-email/components";
+import crypto from "crypto";
 
 import { Order } from "@/types";
 import { formatCurrency } from "@/lib/utils";
+import sampleData from "@/db/sample-data";
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+require("dotenv").config({ path: [".env.local", ".env"] });
+
+PurchaseReceiptEmail.PreviewProps = {
+  order: {
+    id: crypto.randomUUID(),
+    userId: "123",
+    user: {
+      name: "Mohamed",
+      email: "test@test.com",
+    },
+    paymentMethod: "Stripe",
+    shippingAddress: {
+      fullName: "Mohamed",
+      streetAddress: "123 Main St",
+      city: "Zagazig",
+      postalCode: "10001",
+      country: "EGY",
+    },
+    createdAt: new Date(),
+    totalPrice: "100",
+    taxPrice: "10",
+    shippingPrice: "10",
+    itemsPrice: "80",
+    orderItems: sampleData.products.map((x) => ({
+      name: x.name,
+      orderId: "123",
+      productId: "123",
+      slug: x.slug,
+      qty: x.stock,
+      image: x.images[0],
+      price: x.price.toString(),
+    })),
+    isDelivered: true,
+    deliveredAt: new Date(),
+    isPaid: true,
+    paidAt: new Date(),
+    paymentResult: {
+      id: "123",
+      status: "succeeded",
+      pricePaid: "100",
+      email_address: "test@test.com",
+    },
+  },
+} satisfies OrderInformationProps;
 
 const dateFormatter = new Intl.DateTimeFormat("en", { dateStyle: "medium" });
 
-const PurchaseReceiptEmail = ({ order }: { order: Order }) => {
+type OrderInformationProps = {
+  order: Order;
+};
+
+export default function PurchaseReceiptEmail({ order }: OrderInformationProps) {
   return (
     <Html>
       <Preview>View order receipt</Preview>
@@ -61,7 +112,7 @@ const PurchaseReceiptEmail = ({ order }: { order: Order }) => {
                       className="rounded"
                       src={
                         item.image.startsWith("/")
-                          ? `${process.env.NEXT_PUBLIC_SERVER_URL}${item.image}}`
+                          ? `${process.env.NEXT_PUBLIC_SERVER_URL}${item.image}`
                           : item.image
                       }
                     />
@@ -93,5 +144,4 @@ const PurchaseReceiptEmail = ({ order }: { order: Order }) => {
       </Tailwind>
     </Html>
   );
-};
-export default PurchaseReceiptEmail;
+}
