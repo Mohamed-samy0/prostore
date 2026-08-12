@@ -80,7 +80,7 @@ export async function createOrder() {
       });
       return insertedOrder.id;
     });
-    if (!insertedOrderId) throw new Error("Orde not created");
+    if (!insertedOrderId) throw new Error("Order not created");
     return {
       success: true,
       message: "Order created",
@@ -199,7 +199,7 @@ export async function updateOrderToPaid({
   if (!order) throw new Error("Order not found");
   if (order.isPaid) throw new Error("Order is already paid");
 
-  // Transaction to upate order and account for product stock
+  // Transaction to update order and account for product stock
   await prisma.$transaction(async (tx) => {
     for (const item of order.orderItems) {
       await tx.product.update({
@@ -349,7 +349,7 @@ export async function getAllOrders({
   };
 }
 
-// Delete an oreder
+// Delete an order
 export async function deleteOrder(id: string) {
   try {
     await prisma.order.delete({ where: { id } });

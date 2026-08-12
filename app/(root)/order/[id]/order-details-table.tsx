@@ -35,7 +35,7 @@ const PrintLoadingState = () => {
   let status = "";
 
   if (isPending) {
-    status = "Loadin Paypal...";
+    status = "Loading Paypal...";
   } else if (isRejected) {
     status = "Error in loading PayPal";
   } else {
@@ -247,7 +247,7 @@ const OrderDetailsTable = ({
                   clientSecret={stripeClientSecret}
                 />
               )}
-              {/* Cach on delivery */}
+              {/* Cash on delivery */}
               {isAdmin && !isPaid && paymentMethod === "CashOnDelivery" && (
                 <MarkAsPaidButton orderId={order.id} />
               )}
