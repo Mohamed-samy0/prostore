@@ -257,6 +257,9 @@ const OrderDetailsTable = ({
                   </p>
                 </div>
               )}{" "}
+              {isAdmin && isPaid && !isDelivered && (
+                <MarkAsDeliveredButton orderId={order.id} />
+              )}
             </CardContent>
           </Card>
         </div>
